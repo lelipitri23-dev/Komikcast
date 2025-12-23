@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <%- include('partials/head', {title: 'Daftar Komik'}) %>
+</head>
+<body class="bg-[#141414] text-gray-200 font-sans">
+  <%- include('partials/navbar') %>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-[#333] pb-4">
+      <h1 class="text-2xl font-bold text-white uppercase border-l-4 border-blue-500 pl-3">Daftar Komik</h1>
+      
+      <form action="/daftar-komik" method="GET" class="mt-4 md:mt-0 relative w-full md:w-64">
+        <input type="text" name="q" value="<%= searchQuery %>" placeholder="Cari judul..." 
+               class="w-full bg-[#202020] border border-[#333] px-4 py-2 rounded-full text-sm focus:border-blue-500 outline-none">
+        <button type="submit" class="absolute right-3 top-2 text-gray-500 hover:text-white"><i class="fas fa-search"></i></button>
+      </form>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <% mangas.forEach(manga => { %>
+        <div class="group relative bg-[#1e1e1e] rounded overflow-hidden shadow-lg hover:shadow-blue-500/20 transition">
+          <a href="/komik/<%= manga.slug %>">
+            <div class="aspect-[3/4] overflow-hidden">
+              <img src="<%= manga.coverImage %>" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+              <span class="absolute top-1 right-1 bg-black/70 text-white text-[10px] px-1 rounded"><%= manga.type %></span>
+            </div>
+            <div class="p-2">
+              <h3 class="text-xs font-bold text-white truncate group-hover:text-blue-400"><%= manga.title %></h3>
+            </div>
+          </a>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="flex justify-center mt-10 gap-2">
+      <% if (currentPage > 1) { %>
+        <a href="/daftar-komik?page=<%= currentPage - 1 %>&q=<%= searchQuery %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm">Prev</a>
+      <% } %>
+      <span class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-bold"><%= currentPage %></span>
+      <% if (currentPage < totalPages) { %>
+        <a href="/daftar-komik?page=<%= currentPage + 1 %>&q=<%= searchQuery %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm">Next</a>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

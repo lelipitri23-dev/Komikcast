@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <%- include('partials/head', {title: 'Genre: ' + genreName}) %>
+</head>
+<body class="bg-[#141414] text-gray-200 font-sans">
+  
+  <%- include('partials/navbar') %>
+
+  <div class="container mx-auto px-4 py-8">
+    
+    <div class="mb-8 border-b border-[#333] pb-4 flex items-center gap-3">
+      <div class="bg-blue-600 text-white p-3 rounded-lg shadow-lg">
+        <i class="fas fa-tags text-xl"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white uppercase tracking-wide">Genre: <span class="text-blue-500"><%= genreName %></span></h1>
+        <p class="text-xs text-gray-500 mt-1"><%= mangas.length %> komik ditemukan</p>
+      </div>
+    </div>
+
+    <% if (mangas.length > 0) { %>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <% mangas.forEach(manga => { %>
+          <div class="group relative bg-[#1e1e1e] rounded overflow-hidden shadow-lg hover:shadow-blue-500/20 border border-[#2a2a2a] transition duration-300">
+            <a href="/komik/<%= manga.slug %>">
+              <div class="relative aspect-[3/4] overflow-hidden">
+                <img src="<%= manga.coverImage %>" alt="<%= manga.title %>" 
+                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500 ease-in-out">
+                
+                <span class="absolute top-1 right-1 text-[9px] font-bold px-1.5 py-0.5 rounded shadow 
+                  <%= manga.type === 'Manhwa' ? 'bg-purple-600 text-white' : 'bg-yellow-500 text-black' %>">
+                  <%= manga.type || 'Manga' %>
+                </span>
+
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 pt-6">
+                  <span class="text-xs font-bold text-yellow-400"><i class="fas fa-star"></i> <%= manga.rating %></span>
+                </div>
+              </div>
+
+              <div class="p-3">
+                <h3 class="text-xs font-bold text-white truncate group-hover:text-blue-400 transition mb-1">
+                  <%= manga.title %>
+                </h3>
+                <div class="flex justify-between items-center text-[10px] text-gray-500">
+                  <span>Updated</span>
+                  <span><%= manga.chapters.length > 0 ? 'Ch. ' + manga.chapters.length : '?' %></span>
+                </div>
+              </div>
+            </a>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="flex flex-col items-center justify-center py-20 text-gray-500">
+        <i class="fas fa-folder-open text-6xl mb-4 text-[#333]"></i>
+        <h3 class="text-lg font-bold">Belum ada komik untuk genre ini.</h3>
+        <a href="/daftar-komik" class="mt-4 text-blue-500 hover:text-blue-400 text-sm">Lihat semua komik &rarr;</a>
+      </div>
+    <% } %>
+
+  </div>
+
+  <footer class="bg-[#111] border-t border-[#222] mt-12 py-8 text-center">
+    <p class="text-xs text-gray-600">&copy; 2025 KomikClone Project.</p>
+  </footer>
+
+</body>
+</html>

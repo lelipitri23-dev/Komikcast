@@ -1,0 +1,60 @@
+<nav class="bg-[#202020] border-b border-[#333] sticky top-0 z-50 shadow-md">
+  <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+    
+    <a href="/" class="text-2xl font-black text-white uppercase tracking-tighter">
+      KOMIK<span class="text-blue-500">CAST</span>
+    </a>
+
+    <div class="hidden md:flex space-x-6 text-sm font-bold text-gray-400 uppercase">
+      <a href="/" class="hover:text-white transition">Home</a>
+      <a href="/daftar-komik" class="hover:text-white transition">Daftar Komik</a>
+      <a href="/popular" class="hover:text-white transition">Popular</a>
+      <a href="/project" class="hover:text-white transition">Project</a>
+      <a href="/bookmark" class="hover:text-white transition text-red-400">Bookmark</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+       
+       <form action="/search" method="GET" class="hidden lg:flex items-center bg-[#141414] border border-[#333] rounded-full px-4 py-1.5 focus-within:border-blue-500 transition">
+          <input type="text" name="q" placeholder="Cari judul..." class="bg-transparent border-none text-xs text-white focus:outline-none w-32 placeholder-gray-600" autocomplete="off">
+          <button type="submit" class="text-gray-500 hover:text-white transition ml-2">
+            <i class="fas fa-search text-xs"></i>
+          </button>
+       </form>
+
+       <a href="/admin" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded font-bold">ADMIN</a>
+
+       <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white focus:outline-none ml-2">
+         <i class="fas fa-bars text-xl"></i>
+       </button>
+    </div>
+    
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden bg-[#1a1a1a] border-t border-[#333]">
+    <div class="px-4 py-4 space-y-3">
+      
+      <form action="/search" method="GET" class="flex items-center bg-[#141414] border border-[#333] rounded px-3 py-2 mb-4">
+        <input type="text" name="q" placeholder="Cari komik..." class="w-full bg-transparent border-none text-sm text-white focus:outline-none placeholder-gray-500">
+        <button type="submit" class="text-gray-500">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
+
+      <a href="/" class="block text-gray-400 hover:text-white font-bold text-sm uppercase">Home</a>
+      <a href="/daftar-komik" class="block text-gray-400 hover:text-white font-bold text-sm uppercase">Daftar Komik</a>
+      <a href="/popular" class="block text-gray-400 hover:text-white font-bold text-sm uppercase">Popular</a>
+      <a href="/project" class="block text-gray-400 hover:text-white font-bold text-sm uppercase">Project</a>
+      <a href="/bookmark" class="block text-red-400 hover:text-red-300 font-bold text-sm uppercase">Bookmark</a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <%- include('partials/head', {title: 'Komik Terpopuler'}) %>
+</head>
+<body class="bg-[#141414] text-gray-200">
+  <%- include('partials/navbar') %>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8 border-b border-[#333] pb-2">
+      <h1 class="text-2xl font-bold text-white uppercase"><i class="fas fa-trophy text-yellow-500 mr-2"></i> Popular Rating</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <% mangas.forEach((manga, index) => { %>
+        <div class="flex bg-[#1e1e1e] rounded-lg overflow-hidden border border-[#2a2a2a] hover:border-blue-500 transition">
+          <div class="bg-[#252525] w-12 flex items-center justify-center font-black text-2xl text-gray-600 border-r border-[#333]">
+            #<%= index + 1 %>
+          </div>
+          
+          <div class="w-24 h-32 flex-shrink-0">
+            <a href="/komik/<%= manga.slug %>">
+              <img src="<%= manga.coverImage %>" class="w-full h-full object-cover">
+            </a>
+          </div>
+          
+          <div class="p-4 flex flex-col justify-center">
+            <a href="/komik/<%= manga.slug %>" class="text-lg font-bold text-white hover:text-blue-500 line-clamp-1"><%= manga.title %></a>
+            <div class="flex items-center gap-4 mt-2 text-sm text-gray-400">
+              <span><i class="fas fa-star text-yellow-500"></i> <%= manga.rating %></span>
+              <span><i class="fas fa-book"></i> <%= manga.type %></span>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Author: <%= manga.author %></p>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>

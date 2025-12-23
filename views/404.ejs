@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Not Found - KomikCast </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>body { font-family: 'Poppins', sans-serif; background-color: #141414; color: #cbd5e1; }</style>
+</head>
+<body class="flex flex-col min-h-screen justify-center items-center text-center p-4">
+
+  <div class="bg-[#1e1e1e] p-8 md:p-12 rounded-lg shadow-2xl border border-[#333] max-w-lg w-full">
+    <div class="text-6xl md:text-8xl font-black text-[#2a2a2a] mb-4 select-none">
+      404
+    </div>
+    
+    <div class="relative -mt-12 md:-mt-16 mb-6">
+      <i class="fas fa-ghost text-5xl md:text-6xl text-blue-500 animate-bounce"></i>
+    </div>
+
+    <h1 class="text-2xl md:text-3xl font-bold text-white mb-2 uppercase">Halaman Tidak Ditemukan</h1>
+    <p class="text-gray-500 mb-8 text-sm md:text-base">
+      Maaf, halaman <span class="text-red-400 font-mono bg-[#141414] px-1 rounded"><%= url %></span> yang kamu cari tidak ada atau sudah dihapus.
+    </p>
+
+    <div class="flex flex-col gap-3">
+      <a href="/" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded transition uppercase tracking-wide">
+        <i class="fas fa-home mr-2"></i> Kembali ke Home
+      </a>
+      <a href="/daftar-komik" class="bg-[#2a2a2a] hover:bg-[#333] text-gray-300 font-bold py-3 px-6 rounded transition border border-[#333] uppercase tracking-wide text-xs">
+        <i class="fas fa-list mr-2"></i> Lihat Daftar Komik
+      </a>
+    </div>
+  </div>
+
+  <footer class="mt-12 text-gray-600 text-xs">
+    &copy; 2025 KomikCast  Project.
+  </footer>
+
+</body>
+</html>

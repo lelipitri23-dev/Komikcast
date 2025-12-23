@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <%- include('partials/head', {title: 'Bookmark Saya'}) %>
+</head>
+<body class="bg-[#141414] text-gray-200 font-sans">
+  <%- include('partials/navbar') %>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8 border-b border-[#333] pb-2 flex justify-between items-end">
+      <h1 class="text-2xl font-bold text-white uppercase"><i class="fas fa-bookmark text-red-500 mr-2"></i> Bookmark Saya</h1>
+      <button onclick="clearBookmark()" class="text-xs text-red-400 hover:text-red-200 cursor-pointer">Hapus Semua</button>
+    </div>
+
+    <div id="bookmarkContainer" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 min-h-[300px]">
+      <p class="col-span-full text-center text-gray-500 mt-10">Memuat bookmark...</p>
+    </div>
+  </div>
+
+  <script>
+    async function loadBookmarks() {
+      // 1. Ambil list slug dari LocalStorage
+      const bookmarks = JSON.parse(localStorage.getItem('komikBookmarks')) || [];
+      const container = document.getElementById('bookmarkContainer');
+
+      if (bookmarks.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-20 bg-[#1e1e1e] rounded"><i class="fas fa-folder-open text-4xl text-gray-600 mb-4"></i><p class="text-gray-400">Belum ada komik yang di-bookmark.</p></div>';
+        return;
+      }
+
+      // 2. Minta detail komik ke server berdasarkan slug
+      try {
+        const res = await fetch('/api/bookmarks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slugs: bookmarks })
+        });
+        const data = await res.json();
+
+        // 3. Render Kartu Komik
+        let html = '';
+        data.forEach(manga => {
+          html += `
+            <div class="bg-[#1e1e1e] rounded overflow-hidden shadow-lg border border-[#2a2a2a] relative group">
+              <button onclick="removeBookmark('${manga.slug}')" class="absolute top-0 right-0 bg-red-600 text-white w-6 h-6 flex items-center justify-center z-10 hover:bg-red-700" title="Hapus">
+                <i class="fas fa-times text-xs"></i>
+              </button>
+              <a href="/komik/${manga.slug}">
+                <div class="aspect-[3/4] overflow-hidden">
+                  <img src="${manga.coverImage}" class="w-full h-full object-cover group-hover:opacity-80 transition">
+                </div>
+                <div class="p-2">
+                  <h3 class="text-xs font-bold text-white truncate">${manga.title}</h3>
+                  <span class="text-[10px] text-gray-500"><i class="fas fa-star text-yellow-500"></i> ${manga.rating}</span>
+                </div>
+              </a>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+
+      } catch (err) {
+        container.innerHTML = '<p class="text-center text-red-500">Gagal memuat data bookmark.</p>';
+      }
+    }
+
+    // Fungsi Hapus Satu Bookmark
+    function removeBookmark(slug) {
+      let bookmarks = JSON.parse(localStorage.getItem('komikBookmarks')) || [];
+      bookmarks = bookmarks.filter(s => s !== slug);
+      localStorage.setItem('komikBookmarks', JSON.stringify(bookmarks));
+      loadBookmarks(); // Reload tampilan
+    }
+
+    // Fungsi Hapus Semua
+    function clearBookmark() {
+      if(confirm('Hapus semua bookmark?')) {
+        localStorage.removeItem('komikBookmarks');
+        loadBookmarks();
+      }
+    }
+
+    // Jalankan saat load
+    loadBookmarks();
+  </script>
+</body>
+</html>

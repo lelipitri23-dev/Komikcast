@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= chapter.title %> - Komikcast</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #141414; color: #cbd5e1; }
+    a { text-decoration: none; color: inherit; transition: 0.3s; }
+    a:hover { color: #3b82f6; }
+
+    /* --- STYLE ASLI --- */
+    .wrapper { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    
+    .chapter_headpost { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+    .chapter_headpost h1 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+    .allc { font-size: 14px; color: #999; }
+    .allc a { color: #3b82f6; }
+
+    .chapter_breadcrumb { background: #1e1e1e; padding: 10px 15px; border-radius: 5px; margin-bottom: 20px; font-size: 13px; color: #aaa; border: 1px solid #333; }
+    .chapter_breadcrumb ol { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .chapter_breadcrumb i { font-size: 10px; color: #555; }
+
+    /* Navigation Control */
+    .chapter_nav-control { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: #1e1e1e; padding: 15px; border-radius: 5px; border: 1px solid #333; margin: 20px 0; gap: 10px; }
+    .left-control { flex: 1; min-width: 200px; position: relative; }
+    .right-control { display: flex; gap: 10px; }
+
+    .select-label { position: relative; display: block; width: 100%; max-width: 100%; }
+    .select-label select { 
+      width: 100%; background: #252525; color: #fff; border: 1px solid #444; padding: 10px 15px; border-radius: 4px; appearance: none; cursor: pointer; font-size: 14px;
+    }
+    .select-label svg { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; fill: #fff; pointer-events: none; }
+
+    .nextprev a { display: inline-block; background: #3b82f6; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 600; }
+    .nextprev a:hover { background: #2563eb; }
+    .nextprev a.disabled { background: #333; color: #666; pointer-events: none; }
+
+    /* Main Reading Area */
+    .main-reading-area { text-align: center; margin: 30px 0; }
+    .main-reading-area img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+    /* Social Share */
+    .redesign-social { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 20px; }
+    .redesign-link { padding: 8px 12px; border-radius: 3px; font-size: 12px; font-weight: bold; color: white !important; display: flex; align-items: center; gap: 5px; }
+    .redesign-facebook { background: #3b5998; }
+    .redesign-twitter { background: #1da1f2; }
+    .redesign-whatsapp { background: #25d366; }
+    .redesign-pinterest { background: #bd081c; }
+
+    /* Server Notif */
+    .server_select_notif { background: #282731; box-shadow: inset 3px 2px 6px 1px #2f2f2f; overflow: hidden; padding: 10px 15px; font-size: 13px; width: 100%; color: #999; border-radius: 3px; text-align: center; margin-top: 10px; }
+
+    @media (min-width: 768px) { .left-control-new { max-width: 416px; } }
+  </style>
+</head>
+
+<body>
+
+  <%- include('partials/navbar') %>
+
+  <div id="content">
+    <div class="wrapper">
+      
+      <div class="chapter_" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <div class="chapter_headpost">
+          <h1 itemprop="name"><%= chapter.title %></h1>
+          <div class="allc">
+            Semua chapter ada di <a href="/komik/<%= mangaSlug %>"><%= manga.title %></a>
+          </div>
+        </div>
+
+        <div class="chapter_breadcrumb">
+          <ol class="chapter_breadcrumb-list">
+            <li><a href="/">Home</a></li>
+            <i class="fas fa-caret-right"></i>
+            <li><a href="/komik/<%= mangaSlug %>"><%= manga.title %></a></li>
+            <i class="fas fa-caret-right"></i>
+            <li><%= chapter.title %></li>
+          </ol>
+        </div>
+
+        <div class="redesign-social">
+          <a class="redesign-link redesign-facebook" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://yourdomain.com' + '/baca/' + mangaSlug + '/' + chapterSlug) %>" target="_blank">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </a>
+          <a class="redesign-link redesign-whatsapp" href="whatsapp://send?text=Baca <%= chapter.title %> di <%= encodeURIComponent('http://yourdomain.com' + '/baca/' + mangaSlug + '/' + chapterSlug) %>" target="_blank">
+            <i class="fab fa-whatsapp"></i> Whatsapp
+          </a>
+        </div>
+
+        <p class="text-sm text-gray-400 text-center mb-6">
+          Baca manga <a href="/komik/<%= mangaSlug %>" class="text-blue-500"><%= manga.title %></a> terbaru di Komikcast.
+        </p>
+
+        <div class="chapter_nav-control">
+          
+          <div class="left-control left-control-new">
+            <label for="chapter" class="select-label">
+              <select id="slch" onchange="window.location.href = this.value">
+                <% 
+                   const sortedChapters = manga.chapters; 
+                   // Sort logic bisa ditambahkan di backend/model
+                %>
+                <% sortedChapters.forEach(chap => { 
+                   let cSlug = '';
+                   if(chap.url) {
+                      const parts = chap.url.split('/').filter(p => p.length > 0);
+                      cSlug = parts[parts.length - 1];
+                   }
+                   const isSelected = (cSlug === chapterSlug) ? 'selected' : '';
+                %>
+                  <option value="/baca/<%= mangaSlug %>/<%= cSlug %>" <%= isSelected %>>
+                    <%= chap.title %>
+                  </option>
+                <% }) %>
+              </select>
+              <svg><use xlink:href="#select-arrow-down"></use></svg>
+            </label>
+            <div class="server_select_notif">
+              Gunakan dropdown di atas untuk pindah chapter.
+            </div>
+          </div>
+
+          <div class="right-control">
+            <div class="nextprev">
+              <% if(chapter.prevSlug) { %>
+                <a href="/baca/<%= mangaSlug %>/<%= chapter.prevSlug %>" rel="prev">« Prev</a>
+              <% } else { %>
+                <a href="#" class="disabled">« Prev</a>
+              <% } %>
+
+              <% if(chapter.nextSlug) { %>
+                <a href="/baca/<%= mangaSlug %>/<%= chapter.nextSlug %>" rel="next">Next »</a>
+              <% } else { %>
+                <a href="#" class="disabled">Next »</a>
+              <% } %>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="main-reading-area">
+          <% if(chapter.images && chapter.images.length > 0) { %>
+            <% chapter.images.forEach(imgUrl => { %>
+              <img src="<%= imgUrl %>" alt="<%= chapter.title %>" class="alignnone size-full" loading="lazy">
+            <% }) %>
+          <% } else { %>
+            <div class="p-10 text-center bg-[#222]">
+              <p>Gambar tidak tersedia atau gagal dimuat.</p>
+              <button onclick="location.reload()" class="mt-4 bg-blue-600 px-4 py-2 rounded text-white">Refresh Halaman</button>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="chapter_nav-control">
+          <div class="left-control">
+            <label for="chapter_bottom" class="select-label">
+              <select onchange="window.location.href = this.value">
+                <% sortedChapters.forEach(chap => { 
+                   let cSlug = '';
+                   if(chap.url) {
+                      const parts = chap.url.split('/').filter(p => p.length > 0);
+                      cSlug = parts[parts.length - 1];
+                   }
+                   const isSelected = (cSlug === chapterSlug) ? 'selected' : '';
+                %>
+                  <option value="/baca/<%= mangaSlug %>/<%= cSlug %>" <%= isSelected %>>
+                    <%= chap.title %>
+                  </option>
+                <% }) %>
+              </select>
+              <svg><use xlink:href="#select-arrow-down"></use></svg>
+            </label>
+          </div>
+
+          <div class="right-control">
+            <div class="nextprev">
+               <% if(chapter.prevSlug) { %>
+                <a href="/baca/<%= mangaSlug %>/<%= chapter.prevSlug %>" rel="prev">« Prev</a>
+              <% } %>
+
+              <% if(chapter.nextSlug) { %>
+                <a href="/baca/<%= mangaSlug %>/<%= chapter.nextSlug %>" rel="next">Next »</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="komik_info-body chapter_comment bg-[#1e1e1e] p-4 rounded border border-[#333] mt-8">
+          <h3 class="font-bold mb-4 border-b border-[#333] pb-2">Komentar</h3>
+          <p class="text-sm text-gray-500 text-center py-6">Fitur komentar belum tersedia saat ini.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <svg class="sprites" style="display: none;">
+    <symbol id="select-arrow-down" viewBox="0 0 10 6">
+      <polyline points="1 1 5 5 9 1" stroke="currentColor" fill="none" stroke-width="2"></polyline>
+    </symbol>
+  </svg>
+
+  <footer class="bg-[#111] border-t border-[#222] mt-10 py-6 text-center text-xs text-gray-600">
+    <p>&copy; 2025 Komikcast Project.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Definisikan Data
+      const mangaSlug = "<%= mangaSlug %>";
+      const chapterSlug = "<%= chapterSlug %>";
+      const uniqueId = mangaSlug + '-' + chapterSlug; // Harus SAMA PERSIS formatnya dengan di detail.ejs
+      const historyKey = 'readHistory';
+
+      // 2. Simpan ke Local Storage (readHistory) agar sinkron dengan detail.ejs
+      let history = JSON.parse(localStorage.getItem(historyKey)) || [];
+      if (!history.includes(uniqueId)) {
+        history.push(uniqueId);
+        localStorage.setItem(historyKey, JSON.stringify(history));
+        console.log("Chapter saved to history:", uniqueId);
+      }
+
+      // 3. Simpan Last Read (Opsional, buat fitur 'Lanjutkan Membaca')
+      const lastReadData = {
+        title: "<%= chapter.title %>",
+        link: window.location.href,
+        mangaTitle: "<%= manga.title %>",
+        time: Date.now()
+      };
+      localStorage.setItem('last_read', JSON.stringify(lastReadData));
+    });
+  </script>
+
+</body>
+</html>

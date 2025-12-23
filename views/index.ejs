@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komikcast - Tempatnya Baca Komik Gratis Online Bahasa Indonesia</title>
+  <meta name="description" content="Baca ribuan komik, manga, manhwa &amp; manhua Sub Indo gratis. Nikmati gambar terbaik &amp; terjemahan akurat. Chapter terbaru update setiap hari!" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #141414;
+      color: #cbd5e1;
+    }
+
+    /* Scrollbar Kustom */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Agar judul tidak terlalu panjang (titik-titik ...) */
+    .line-clamp-1 {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <%- include('partials/navbar') %>
+
+    <div class="container mx-auto px-4 py-6">
+
+      <div class="mb-10">
+        <div class="flex items-center gap-2 mb-4 border-b border-[#333] pb-2">
+          <i class="fas fa-fire text-red-500"></i>
+          <h2 class="text-lg font-bold text-white uppercase italic">Hot Comic Update</h2>
+        </div>
+
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+          <% mangas.slice(0, 6).forEach(manga=> { %>
+            <a href="/komik/<%= manga.slug %>"
+              class="group relative block overflow-hidden rounded-md shadow-lg aspect-[3/4]">
+              <img src="<%= manga.coverImage %>" alt="<%= manga.title %>"
+                class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500 ease-in-out">
+
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+
+              <div
+                class="absolute top-2 left-2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow">
+                <i class="fas fa-star text-[9px]"></i>
+                <%= manga.rating %>
+              </div>
+
+              <div class="absolute bottom-0 p-2 w-full">
+                <h3
+                  class="text-xs font-bold text-white line-clamp-2 leading-tight group-hover:text-blue-400 transition">
+                  <%= manga.title %>
+                </h3>
+              </div>
+            </a>
+            <% }) %>
+        </div>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-8">
+
+        <div class="lg:w-3/4">
+          <div class="flex justify-between items-center border-b border-[#333] pb-3 mb-5">
+            <div class="flex items-center gap-2">
+              <span class="bg-blue-600 w-1 h-6 rounded-sm"></span>
+              <h2 class="text-xl font-bold text-white uppercase tracking-wide">Rilisan Terbaru</h2>
+            </div>
+            <a href="/daftar-komik"
+              class="text-xs font-bold bg-[#333] hover:bg-blue-600 px-3 py-1 rounded text-white transition">LIHAT
+              SEMUA</a>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <% mangas.forEach(manga=> { %>
+              <div
+                class="bg-[#1e1e1e] rounded-lg overflow-hidden shadow-lg border border-[#2a2a2a] group hover:border-blue-500/50 transition duration-300">
+
+                <div class="relative aspect-[15/21] overflow-hidden">
+                  <a href="/komik/<%= manga.slug %>">
+                    <img src="<%= manga.coverImage %>" alt="<%= manga.title %>"
+                      class="w-full h-full object-cover group-hover:opacity-80 transition">
+                  </a>
+
+                  <span
+                    class="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded shadow-md uppercase tracking-wider
+                  <%= manga.type.toLowerCase().includes('manhwa') ? 'bg-purple-600 text-white' : 
+                     (manga.type.toLowerCase().includes('manhua') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black') %>">
+                    <%= manga.type || 'Manga' %>
+                  </span>
+
+                  <% if(manga.rating>= 8) { %>
+                    <span
+                      class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold px-1.5 rounded uppercase">HOT</span>
+                    <% } %>
+                </div>
+
+                <div class="p-3">
+                  <a href="/komik/<%= manga.slug %>">
+                    <h3
+                      class="font-bold text-[13px] text-white leading-snug line-clamp-2 hover:text-blue-500 transition mb-3 h-10">
+                      <%= manga.title %>
+                    </h3>
+                  </a>
+
+                  <div class="space-y-1.5">
+                    <% if (manga.chapters && manga.chapters.length> 0) { %>
+                      
+                      <% manga.chapters.slice(0, 3).forEach(chap=> { %>
+                        <div class="flex justify-between items-center text-[10px] border-t border-[#333] pt-1.5">
+                          <% 
+                             // --- LOGIKA PERBAIKAN URL ---
+                             let chapterSlug = '';
+                             if(chap.url) {
+                                // Ambil bagian terakhir dari URL asli sebagai slug
+                                const parts = chap.url.split('/').filter(p => p.length > 0);
+                                chapterSlug = parts[parts.length - 1];
+                             }
+                          %>
+                          
+                          <a href="/baca/<%= manga.slug %>/<%= chapterSlug %>"
+                            class="bg-[#2a2a2a] hover:bg-blue-600 text-gray-300 hover:text-white px-2 py-0.5 rounded-[3px] transition truncate max-w-[65%]">
+                            <%= chap.title %>
+                          </a>
+                          
+                          <span class="text-gray-500 italic text-[9px]">
+                            <%= chap.releaseDate %>
+                          </span>
+                        </div>
+                        <% }) %>
+                      
+                      <% } else { %>
+                            <div class="text-[10px] text-gray-600 italic text-center py-2">Belum ada chapter</div>
+                      <% } %>
+                  </div>
+                </div>
+
+              </div>
+              <% }) %>
+          </div>
+        </div>
+
+        <div class="lg:w-1/4 space-y-8">
+
+          <div
+            class="bg-gradient-to-r from-indigo-900 to-blue-900 rounded-lg p-5 text-center shadow-lg border border-indigo-700 relative overflow-hidden group cursor-pointer">
+            <div
+              class="absolute -right-4 -top-4 text-white/10 text-8xl rotate-12 group-hover:rotate-0 transition duration-500">
+              <i class="fab fa-discord"></i>
+            </div>
+            <h3 class="font-bold text-white text-lg relative z-10">JOIN DISCORD</h3>
+            <p class="text-xs text-indigo-200 mt-1 relative z-10">Gabung komunitas dan request komik!</p>
+          </div>
+
+          <div class="bg-[#1e1e1e] rounded-lg border border-[#333] overflow-hidden">
+            <div class="bg-[#252525] p-3 border-b border-[#333]">
+              <h3 class="text-sm font-bold text-white uppercase border-l-4 border-blue-500 pl-2">Popular Manga</h3>
+            </div>
+            <div class="p-3">
+              <ul class="space-y-4">
+                <% mangas.slice(0, 5).forEach((m, idx)=> { %>
+                  <li class="flex gap-3 items-center group cursor-pointer">
+                    <span class="text-2xl font-bold text-[#333] group-hover:text-blue-500 transition">0<%= idx+1 %>
+                    </span>
+
+                    <div class="w-12 h-16 flex-shrink-0 overflow-hidden rounded">
+                      <img src="<%= m.coverImage %>" class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="flex flex-col">
+                      <a href="/komik/<%= m.slug %>"
+                        class="text-xs font-bold text-gray-200 group-hover:text-blue-500 line-clamp-2 transition">
+                        <%= m.title %>
+                      </a>
+                      <span class="text-[10px] text-gray-500 mt-1"><i class="fas fa-star text-yellow-500"></i>
+                        <%= m.rating %>
+                      </span>
+                    </div>
+                  </li>
+                  <% }) %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-[#1e1e1e] rounded-lg border border-[#333] overflow-hidden">
+            <div class="bg-[#252525] p-3 border-b border-[#333]">
+              <h3 class="text-sm font-bold text-white uppercase border-l-4 border-blue-500 pl-2">Genre</h3>
+            </div>
+            <div class="p-3 flex flex-wrap gap-2">
+              <% ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Harem', 'Isekai', 'Magic', 'Martial Arts', 
+                  'Mecha', 'Mystery', 'Romance', 'School Life', 'Sci-Fi', 'Seinen', 'Shoujo', 'Shounen', 
+                  'Slice of Life'].forEach(genre => { %>
+                
+                <a href="/genres/<%= genre.toLowerCase().replace(/ /g, '-') %>" 
+                   class="text-[11px] font-bold bg-[#2a2a2a] text-gray-400 hover:text-white hover:bg-blue-600 border border-[#333] px-2.5 py-1 rounded transition duration-200">
+                  <%= genre %>
+                </a>
+
+              <% }) %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-[#111] border-t border-[#222] mt-10 py-6 text-center text-xs text-gray-600">
+      <p>&copy; 2025 Komikcast - Tempatnya Baca Komik Gratis Online Bahasa Indonesia.</p>
+    </footer>
+
+</body>
+
+</html>
