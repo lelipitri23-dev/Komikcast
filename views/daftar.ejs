@@ -1,47 +1,257 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <%- include('partials/head', {title: 'Daftar Komik'}) %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Komik - Komikcast</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #141414; color: #cbd5e1; }
+    
+    /* Custom Checkbox Style */
+    .filter-checkbox:checked + label { color: #3b82f6; font-weight: bold; }
+    
+    /* Dropdown Animation */
+    .dropdown-content { display: none; }
+    .dropdown-content.show { display: block; animation: fadeIn 0.2s; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
-<body class="bg-[#141414] text-gray-200 font-sans">
+<body class="flex flex-col min-h-screen">
+  
   <%- include('partials/navbar') %>
 
   <div class="container mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-[#333] pb-4">
+    
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-[#333] pb-4 gap-4">
       <h1 class="text-2xl font-bold text-white uppercase border-l-4 border-blue-500 pl-3">Daftar Komik</h1>
       
-      <form action="/daftar-komik" method="GET" class="mt-4 md:mt-0 relative w-full md:w-64">
-        <input type="text" name="q" value="<%= searchQuery %>" placeholder="Cari judul..." 
-               class="w-full bg-[#202020] border border-[#333] px-4 py-2 rounded-full text-sm focus:border-blue-500 outline-none">
-        <button type="submit" class="absolute right-3 top-2 text-gray-500 hover:text-white"><i class="fas fa-search"></i></button>
+      <div>
+        <% const currentMode = queryParams.mode || 'image'; %>
+        <% if (currentMode === 'image') { %>
+          <button onclick="changeMode('text')" class="bg-[#252525] hover:bg-[#333] text-white px-4 py-2 rounded text-sm border border-[#444] transition flex items-center gap-2">
+            <i class="fas fa-list"></i> Mode Text
+          </button>
+        <% } else { %>
+          <button onclick="changeMode('image')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition flex items-center gap-2">
+            <i class="fas fa-th-large"></i> Mode Gambar
+          </button>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="bg-[#1e1e1e] p-4 rounded-lg border border-[#333] mb-8">
+      <form action="/daftar-komik" method="GET" class="flex flex-wrap gap-4 items-center">
+        <% if(queryParams.q) { %> <input type="hidden" name="q" value="<%= queryParams.q %>"> <% } %>
+        <input type="hidden" name="mode" value="<%= queryParams.mode || 'image' %>">
+
+        <div class="relative group dropdown-container">
+          <button type="button" class="dropdown-btn bg-[#252525] text-gray-300 px-4 py-2 rounded border border-[#444] text-sm hover:border-blue-500 w-full md:w-auto flex justify-between items-center gap-2">
+            Genre <i class="fas fa-angle-down"></i>
+          </button>
+          <div class="dropdown-content absolute z-50 bg-[#252525] border border-[#444] p-4 rounded mt-2 w-64 md:w-96 shadow-xl max-h-80 overflow-y-auto hidden">
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <% 
+                const genres = ["Action", "Adventure", "Comedy", "Cooking", "Drama", "Ecchi", "Fantasy", "Game", "Harem", "Historical", "Horror", "Isekai", "Josei", "Magic", "Martial Arts", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "School", "Sci-Fi", "Seinen", "Shoujo", "Shounen", "Slice of Life", "Sports", "Supernatural", "Thriller", "Tragedy"];
+                const selectedGenres = Array.isArray(queryParams['genre[]']) ? queryParams['genre[]'] : (queryParams.genre ? [queryParams.genre] : []);
+              %>
+              <% genres.forEach(g => { %>
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" id="g-<%= g %>" name="genre[]" value="<%= g %>" class="filter-checkbox" <%= selectedGenres.includes(g) ? 'checked' : '' %>>
+                  <label for="g-<%= g %>" class="cursor-pointer hover:text-blue-400"><%= g %></label>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative group dropdown-container">
+          <button type="button" class="dropdown-btn bg-[#252525] text-gray-300 px-4 py-2 rounded border border-[#444] text-sm hover:border-blue-500 flex items-center gap-2">
+            Status <i class="fas fa-angle-down"></i>
+          </button>
+          <div class="dropdown-content absolute z-50 bg-[#252525] border border-[#444] p-2 rounded mt-2 w-40 shadow-xl hidden">
+            <div class="flex flex-col gap-2 text-xs">
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="status" value="all" <%= (!queryParams.status || queryParams.status == 'all') ? 'checked' : '' %>> All
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="status" value="Ongoing" <%= queryParams.status == 'Ongoing' ? 'checked' : '' %>> Ongoing
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="status" value="Completed" <%= queryParams.status == 'Completed' ? 'checked' : '' %>> Completed
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative group dropdown-container">
+          <button type="button" class="dropdown-btn bg-[#252525] text-gray-300 px-4 py-2 rounded border border-[#444] text-sm hover:border-blue-500 flex items-center gap-2">
+            Type <i class="fas fa-angle-down"></i>
+          </button>
+          <div class="dropdown-content absolute z-50 bg-[#252525] border border-[#444] p-2 rounded mt-2 w-40 shadow-xl hidden">
+            <div class="flex flex-col gap-2 text-xs">
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="type" value="all" <%= (!queryParams.type || queryParams.type == 'all') ? 'checked' : '' %>> All
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="type" value="Manga" <%= queryParams.type == 'Manga' ? 'checked' : '' %>> Manga
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="type" value="Manhwa" <%= queryParams.type == 'Manhwa' ? 'checked' : '' %>> Manhwa
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="type" value="Manhua" <%= queryParams.type == 'Manhua' ? 'checked' : '' %>> Manhua
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative group dropdown-container">
+          <button type="button" class="dropdown-btn bg-[#252525] text-gray-300 px-4 py-2 rounded border border-[#444] text-sm hover:border-blue-500 flex items-center gap-2">
+            Sort By <i class="fas fa-angle-down"></i>
+          </button>
+          <div class="dropdown-content absolute z-50 bg-[#252525] border border-[#444] p-2 rounded mt-2 w-40 shadow-xl hidden">
+            <div class="flex flex-col gap-2 text-xs">
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="orderby" value="update" <%= (!queryParams.orderby || queryParams.orderby == 'update') ? 'checked' : '' %>> Update
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="orderby" value="popular" <%= queryParams.orderby == 'popular' ? 'checked' : '' %>> Popular
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="orderby" value="titleasc" <%= queryParams.orderby == 'titleasc' ? 'checked' : '' %>> A-Z
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
+                <input type="radio" name="orderby" value="titledesc" <%= queryParams.orderby == 'titledesc' ? 'checked' : '' %>> Z-A
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded text-sm font-bold shadow-lg transition ml-auto">
+          <i class="fas fa-search mr-1"></i> Filter
+        </button>
       </form>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      <% mangas.forEach(manga => { %>
-        <div class="group relative bg-[#1e1e1e] rounded overflow-hidden shadow-lg hover:shadow-blue-500/20 transition">
-          <a href="/komik/<%= manga.slug %>">
-            <div class="aspect-[3/4] overflow-hidden">
-              <img src="<%= manga.coverImage %>" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
-              <span class="absolute top-1 right-1 bg-black/70 text-white text-[10px] px-1 rounded"><%= manga.type %></span>
-            </div>
-            <div class="p-2">
-              <h3 class="text-xs font-bold text-white truncate group-hover:text-blue-400"><%= manga.title %></h3>
-            </div>
-          </a>
+    <% if (mangas.length === 0) { %>
+      <div class="p-8 text-center bg-[#1e1e1e] rounded border border-[#333] text-gray-500">
+        Komik tidak ditemukan dengan filter tersebut.
+      </div>
+    <% } else { %>
+
+      <% if (queryParams.mode === 'text') { %>
+        <div class="flex flex-col gap-2">
+          <% mangas.forEach(manga => { %>
+            <a href="/komik/<%= manga.slug %>" class="flex items-center gap-4 bg-[#1e1e1e] hover:bg-[#252525] p-3 rounded border border-[#333] hover:border-blue-500 transition group">
+              <div class="w-12 h-16 flex-shrink-0 overflow-hidden rounded">
+                <img src="<%= manga.coverImage %>" class="w-full h-full object-cover">
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <h3 class="text-sm font-bold text-white truncate group-hover:text-blue-400"><%= manga.title %></h3>
+                <div class="flex items-center gap-2 text-[10px] text-gray-500 mt-1">
+                  <span class="<%= manga.type === 'Manhwa' ? 'text-purple-400' : (manga.type === 'Manhua' ? 'text-red-400' : 'text-gray-300') %>"><%= manga.type %></span>
+                  <span>•</span>
+                  <span><i class="fas fa-star text-yellow-500"></i> <%= manga.rating %></span>
+                  <span>•</span>
+                  <span><%= new Date(manga.lastUpdated).toLocaleDateString() %></span>
+                </div>
+              </div>
+              
+              <div class="text-gray-500 text-xs">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </a>
+          <% }) %>
         </div>
-      <% }) %>
-    </div>
+
+      <% } else { %>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <% mangas.forEach(manga => { %>
+            <div class="group relative bg-[#1e1e1e] rounded overflow-hidden shadow-lg hover:shadow-blue-500/20 transition border border-[#333]">
+              <a href="/komik/<%= manga.slug %>">
+                <div class="aspect-[3/4] overflow-hidden relative">
+                  <img src="<%= manga.coverImage %>" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" loading="lazy">
+                  <span class="absolute top-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded backdrop-blur-sm border border-white/10 uppercase font-bold">
+                    <%= manga.type %>
+                  </span>
+                  <span class="absolute bottom-1 left-1 bg-blue-600/90 text-white text-[10px] px-1.5 py-0.5 rounded font-bold shadow-sm">
+                    <i class="fas fa-star text-yellow-300 text-[9px]"></i> <%= manga.rating %>
+                  </span>
+                </div>
+                <div class="p-3">
+                  <h3 class="text-xs font-bold text-white truncate group-hover:text-blue-400 transition mb-1"><%= manga.title %></h3>
+                  <p class="text-[10px] text-gray-500">Updated: <%= new Date(manga.lastUpdated).toLocaleDateString() %></p>
+                </div>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+
+    <% } %>
 
     <div class="flex justify-center mt-10 gap-2">
+      <% 
+        // Helper untuk membuat URL pagination dengan mempertahankan filter
+        function getPageUrl(p) {
+          const params = new URLSearchParams(queryParams);
+          params.set('page', p);
+          return '/daftar-komik?' + params.toString();
+        }
+      %>
+
       <% if (currentPage > 1) { %>
-        <a href="/daftar-komik?page=<%= currentPage - 1 %>&q=<%= searchQuery %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm">Prev</a>
+        <a href="<%= getPageUrl(currentPage - 1) %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm text-gray-300 transition">Prev</a>
       <% } %>
-      <span class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-bold"><%= currentPage %></span>
+      
+      <span class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-bold shadow-lg shadow-blue-500/30"><%= currentPage %></span>
+      
       <% if (currentPage < totalPages) { %>
-        <a href="/daftar-komik?page=<%= currentPage + 1 %>&q=<%= searchQuery %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm">Next</a>
+        <a href="<%= getPageUrl(currentPage + 1) %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm text-gray-300 transition">Next</a>
       <% } %>
     </div>
+
   </div>
-</body>
-</html>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    // Toggle Mode Function
+    function changeMode(mode) {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set('mode', mode);
+      window.location.search = urlParams.toString();
+    }
+
+    // Dropdown Logic (Native JS without Bootstrap)
+    document.addEventListener('click', function(event) {
+      const isDropdownButton = event.target.matches('.dropdown-btn') || event.target.closest('.dropdown-btn');
+      const isInsideDropdown = event.target.closest('.dropdown-content');
+
+      // Tutup semua dropdown lain jika klik diluar
+      if (!isInsideDropdown && !isDropdownButton) {
+        document.querySelectorAll('.dropdown-content').forEach(d => d.classList.add('hidden'));
+      }
+
+      // Jika klik tombol dropdown
+      if (isDropdownButton) {
+        const btn = event.target.closest('.dropdown-btn');
+        const content = btn.nextElementSibling;
+        
+        // Tutup yang lain dulu
+        document.querySelectorAll('.dropdown-content').forEach(d => {
+          if (d !== content) d.classList.add('hidden');
+        });
+
+        // Toggle yang diklik
+        content.classList.toggle('hidden');
+        content.classList.toggle('show');
+      }
+    });
+  </script>

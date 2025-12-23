@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= manga.title %> - Komikcast</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -17,6 +17,7 @@
       color: #cbd5e1;
     }
 
+    /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
     }
@@ -31,6 +32,7 @@
       background: #2563eb;
     }
 
+    /* Synopsis Styling */
     .synopsis-content p {
       margin-bottom: 10px;
       line-height: 1.6;
@@ -39,20 +41,6 @@
     .synopsis-content strong {
       color: #fff;
     }
-
-    /* --- STYLE INDIKATOR DIBACA --- */
-    /* Jika class .read ada, gelapkan warnanya */
-    .chapter-item.read {
-      opacity: 0.6;
-    }
-    .chapter-item.read .chapter-title {
-      color: #888 !important;
-    }
-    .chapter-item.read .read-badge {
-      display: inline-block !important;
-    }
-
-    /* Munculkan badge */
   </style>
 </head>
 
@@ -68,236 +56,206 @@
     </div>
   </div>
 
-  <div class="container mx-auto px-4 py-8 max-w-6xl flex-grow">
+  <div class="container mx-auto px-4 py-8">
 
     <div class="bg-[#1e1e1e] rounded-lg p-6 shadow-xl border border-[#2a2a2a] mb-8">
       <div class="flex flex-col md:flex-row gap-8">
-
+        
         <div class="w-full md:w-1/4 flex-shrink-0">
           <div class="relative rounded-lg overflow-hidden shadow-2xl border border-[#333] group">
             <img src="<%= manga.coverImage %>" alt="<%= manga.title %>" class="w-full h-auto object-cover transform group-hover:scale-105 transition duration-500">
+            
             <div class="absolute top-0 right-0 bg-blue-600/90 backdrop-blur-sm text-white font-bold px-3 py-1 rounded-bl-lg shadow-md flex items-center gap-1">
-              <i class="fas fa-star text-yellow-400 text-xs"></i> <%= manga.rating %>
+               <i class="fas fa-star text-yellow-400 text-xs"></i> <%= manga.rating %>
             </div>
+            
             <div class="absolute top-0 left-0 bg-red-600/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-br-lg shadow-md uppercase">
               <%= manga.type %>
             </div>
           </div>
 
-          <button id="btnBookmark" class="w-full mt-4 bg-[#2a2a2a] hover:bg-blue-600 text-white py-3 rounded-lg font-bold transition border border-[#333] flex items-center justify-center gap-2 group">
-            <i class="far fa-bookmark group-hover:scale-110 transition" id="iconBookmark"></i>
+          <button id="btnBookmark" onclick="toggleBookmark()" class="w-full mt-4 bg-[#2a2a2a] hover:bg-blue-600 text-white py-3 rounded-lg font-bold transition border border-[#333] flex items-center justify-center gap-2 group">
+            <i class="far fa-bookmark group-hover:scale-110 transition" id="iconBookmark"></i> 
             <span id="textBookmark">Bookmark</span>
           </button>
         </div>
 
         <div class="flex-1">
           <h1 class="text-2xl md:text-4xl font-bold text-white mb-2 leading-tight"><%= manga.title %></h1>
-          <p class="text-sm text-gray-500 italic mb-6">
-            <%= manga.nativeTitle %>
-          </p>
+          <p class="text-sm text-gray-500 italic mb-6"><%= manga.nativeTitle %></p>
 
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm mb-6 border-y border-[#333] py-4 bg-[#181818]/50 p-4 rounded-lg">
             <div>
-              <span class="text-gray-500 block text-[10px] uppercase tracking-wider mb-1">Status</span><span class="text-white font-semibold"><%= manga.status %></span>
+              <span class="text-gray-500 block text-[10px] uppercase tracking-wider mb-1">Status</span>
+              <span class="text-white font-semibold"><%= manga.status %></span>
             </div>
             <div>
-              <span class="text-gray-500 block text-[10px] uppercase tracking-wider mb-1">Author</span><span class="text-white font-semibold"><%= manga.author %></span>
+              <span class="text-gray-500 block text-[10px] uppercase tracking-wider mb-1">Author</span>
+              <span class="text-white font-semibold"><%= manga.author %></span>
             </div>
             <div>
-              <span class="text-gray-500 block text-[10px] uppercase tracking-wider mb-1">Updated</span><span class="text-blue-400 font-semibold text-xs"><%= new Date(manga.lastUpdated).toLocaleDateString() %></span>
+              <span class="text-gray-500 block text-[10px] uppercase tracking-wider mb-1">Updated</span>
+              <span class="text-blue-400 font-semibold text-xs"><%= new Date(manga.lastUpdated).toLocaleDateString() %></span>
             </div>
           </div>
 
           <div class="mb-6">
             <div class="flex flex-wrap gap-2">
-              <% manga.genres.forEach(genre => {
-                %>
-                <a href="/genres/<%= genre.toLowerCase().trim().replace(/[\s\W-]+/g, '-') %>" class="text-xs font-medium bg-[#2a2a2a] text-gray-300 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition duration-300 border border-[#333]"><%= genre %></a>
-                <%
-              }) %>
+              <% manga.genres.forEach(genre => { %>
+                <a href="/genres/<%= genre.toLowerCase().trim().replace(/[\s\W-]+/g, '-') %>" 
+                   class="text-xs font-medium bg-[#2a2a2a] text-gray-300 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition duration-300 border border-[#333]">
+                  <%= genre %>
+                </a>
+              <% }) %>
             </div>
           </div>
 
           <h3 class="text-white font-bold mb-2 text-sm uppercase border-l-4 border-blue-500 pl-3">Sinopsis</h3>
           <div class="synopsis-content text-sm bg-[#181818] p-4 rounded border border-[#333] max-h-60 overflow-y-auto custom-scrollbar">
-            <%- manga.synopsis || '<p class="text-gray-500 italic">Tidak ada sinopsis.</p>' %>
+            <%- manga.synopsis || '<p class="text-gray-500 italic">Tidak ada sinopsis yang tersedia.</p>' %>
           </div>
         </div>
       </div>
     </div>
 
     <div class="bg-[#1e1e1e] rounded-lg shadow-xl border border-[#2a2a2a] overflow-hidden mb-12">
+      
       <div class="bg-[#252525] p-4 border-b border-[#333] flex flex-col md:flex-row justify-between items-center gap-4">
         <h3 class="text-lg font-bold text-white uppercase flex items-center gap-2">
           <i class="fas fa-list text-blue-500"></i> Chapter List
         </h3>
+        
         <div class="relative w-full md:w-64">
-          <input type="text" id="chapterSearchInput" placeholder="Cari Chapter..." class="w-full bg-[#141414] border border-[#333] text-sm px-4 py-2 pr-10 rounded-full focus:outline-none focus:border-blue-500 text-gray-300 transition placeholder-gray-600">
+          <input type="text" id="chapterSearchInput" placeholder="Cari Chapter... (Cth: 88)" 
+                 class="w-full bg-[#141414] border border-[#333] text-sm px-4 py-2 pr-10 rounded-full focus:outline-none focus:border-blue-500 text-gray-300 transition placeholder-gray-600">
           <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs"></i>
         </div>
       </div>
 
       <div class="max-h-[600px] overflow-y-auto custom-scrollbar p-2">
-        <% if (manga.chapters && manga.chapters.length > 0) {
-          %>
+        <% if(manga.chapters && manga.chapters.length > 0) { %>
+          
           <ul id="chapterList" class="space-y-1">
-            <% manga.chapters.forEach(chap => {
-              let cSlug = '';
-              if (chap.url) {
-                const parts = chap.url.split('/').filter(p => p.length > 0);
-                cSlug = parts[parts.length - 1];
-              }
-              const uniqueId = manga.slug + '-' + cSlug; // ID Unik untuk History
+            <% manga.chapters.forEach(chap => { %>
+              <% 
+                let chapterSlug = '';
+                if(chap.url) {
+                   const parts = chap.url.split('/').filter(p => p.length > 0);
+                   chapterSlug = parts[parts.length - 1];
+                }
               %>
-              <li class="chapter-item" data-id="<%= uniqueId %>">
-                <a href="/baca/<%= manga.slug %>/<%= cSlug %>" onclick="markAsRead('<%= uniqueId %>')" class="flex justify-between items-center bg-[#252525] hover:bg-[#333] p-3 rounded transition border-l-4 border-transparent hover:border-blue-500 group relative">
+              <li class="chapter-item">
+                <a href="/baca/<%= manga.slug %>/<%= chapterSlug %>" class="flex justify-between items-center bg-[#252525] hover:bg-[#333] p-3 rounded transition border-l-4 border-transparent hover:border-blue-500 group">
                   <div class="flex flex-col">
                     <span class="chapter-title text-sm font-bold text-gray-200 group-hover:text-blue-400 transition">
                       <%= chap.title %>
                     </span>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <span class="read-badge hidden text-[9px] font-bold bg-green-900 text-green-300 px-1.5 py-0.5 rounded border border-green-800">DIBACA</span>
-                    <span class="text-[10px] text-gray-500 italic bg-[#1a1a1a] px-2 py-1 rounded border border-[#333]">
-                      <%= chap.releaseDate %>
-                    </span>
-                  </div>
+                  <span class="text-[10px] text-gray-500 italic bg-[#1a1a1a] px-2 py-1 rounded border border-[#333]">
+                    <%= chap.releaseDate %>
+                  </span>
                 </a>
               </li>
-              <%
-            }) %>
+            <% }) %>
           </ul>
+
           <div id="noResultMsg" class="hidden text-center py-8">
-            <p class="text-gray-500 text-sm">
-              Chapter tidak ditemukan.
-            </p>
+             <div class="inline-block bg-[#252525] p-4 rounded-full mb-2">
+                <i class="fas fa-search text-gray-600 text-xl"></i>
+             </div>
+             <p class="text-gray-500 text-sm">Chapter tidak ditemukan.</p>
           </div>
-          <%
-        } else {
-          %>
+
+        <% } else { %>
           <div class="p-10 text-center text-gray-500">
-            <p>
-              Belum ada chapter.
-            </p>
+            <i class="fas fa-exclamation-circle text-4xl mb-3 text-gray-600"></i>
+            <p>Belum ada chapter yang dirilis.</p>
           </div>
-          <%
-        } %>
+        <% } %>
       </div>
     </div>
 
   </div>
 
-  <footer class="bg-[#111] border-t border-[#222] py-8 text-center mt-auto">
-    <p class="text-xs text-gray-600">
-      &copy; 2025 Komikcast Project.
-    </p>
-  </footer>
+  <%- include('partials/footer') %>
 
   <script>
+    // --- BOOKMARK LOGIC ---
+    const slug = "<%= manga.slug %>";
+    const btn = document.getElementById('btnBookmark');
+    const icon = document.getElementById('iconBookmark');
+    const text = document.getElementById('textBookmark');
+    const storageKey = 'komikBookmarks';
+
+    // Update UI berdasarkan status
+    function updateBookmarkUI(isBookmarked) {
+      if (isBookmarked) {
+        btn.className = "w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition border border-red-800 flex items-center justify-center gap-2 shadow-lg shadow-red-900/20";
+        icon.className = "fas fa-bookmark";
+        text.innerText = "Bookmarked";
+      } else {
+        btn.className = "w-full mt-4 bg-[#2a2a2a] hover:bg-blue-600 text-white py-3 rounded-lg font-bold transition border border-[#333] flex items-center justify-center gap-2 group";
+        icon.className = "far fa-bookmark group-hover:scale-110 transition";
+        text.innerText = "Bookmark";
+      }
+    }
+
+    // Cek status saat load
+    function checkStatus() {
+      const bookmarks = JSON.parse(localStorage.getItem(storageKey)) || [];
+      updateBookmarkUI(bookmarks.includes(slug));
+    }
+
+    // Fungsi Toggle Klik
+    function toggleBookmark() {
+      let bookmarks = JSON.parse(localStorage.getItem(storageKey)) || [];
+      
+      if (bookmarks.includes(slug)) {
+        bookmarks = bookmarks.filter(s => s !== slug); // Hapus
+        updateBookmarkUI(false);
+      } else {
+        bookmarks.push(slug); // Tambah
+        updateBookmarkUI(true);
+      }
+      
+      localStorage.setItem(storageKey, JSON.stringify(bookmarks));
+    }
+
+    // --- SEARCH CHAPTER LOGIC ---
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Inisialisasi Variable
-      const mangaSlug = "<%= manga.slug %>";
-      const bookmarkKey = 'komikBookmarks';
-      const historyKey = 'readHistory';
+      checkStatus(); // Jalankan cek bookmark
 
-      const btn = document.getElementById('btnBookmark');
-      const icon = document.getElementById('iconBookmark');
-      const text = document.getElementById('textBookmark');
-
-      // ----------------------------------------
-      // A. LOGIKA BOOKMARK
-      // ----------------------------------------
-      function updateBookmarkUI(isBookmarked) {
-        if (isBookmarked) {
-          btn.className = "w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition border border-red-800 flex items-center justify-center gap-2 shadow-lg shadow-red-900/20";
-          icon.className = "fas fa-bookmark";
-          text.innerText = "Bookmarked";
-        } else {
-          btn.className = "w-full mt-4 bg-[#2a2a2a] hover:bg-blue-600 text-white py-3 rounded-lg font-bold transition border border-[#333] flex items-center justify-center gap-2 group";
-          icon.className = "far fa-bookmark group-hover:scale-110 transition";
-          text.innerText = "Bookmark";
-        }
-      }
-
-      function toggleBookmark() {
-        let bookmarks = JSON.parse(localStorage.getItem(bookmarkKey)) || [];
-        if (bookmarks.includes(mangaSlug)) {
-          bookmarks = bookmarks.filter(s => s !== mangaSlug);
-          updateBookmarkUI(false);
-        } else {
-          bookmarks.push(mangaSlug);
-          updateBookmarkUI(true);
-        }
-        localStorage.setItem(bookmarkKey, JSON.stringify(bookmarks));
-      }
-
-      // Pasang Event Listener ke Tombol
-      if (btn) btn.addEventListener('click', toggleBookmark);
-
-      // Cek Status Awal
-      const bookmarks = JSON.parse(localStorage.getItem(bookmarkKey)) || [];
-      updateBookmarkUI(bookmarks.includes(mangaSlug));
-
-
-      // ----------------------------------------
-      // B. LOGIKA HISTORY (READ CHAPTER)
-      // ----------------------------------------
-      // Fungsi ini dipanggil via onclick di HTML (harus global scope)
-      window.markAsRead = function(uniqueId) {
-        let history = JSON.parse(localStorage.getItem(historyKey)) || [];
-        if (!history.includes(uniqueId)) {
-          history.push(uniqueId);
-          localStorage.setItem(historyKey, JSON.stringify(history));
-        }
-      };
-
-      function checkReadHistory() {
-        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-        const chapterItems = document.querySelectorAll('.chapter-item');
-
-        chapterItems.forEach(item => {
-          const id = item.getAttribute('data-id');
-          if (history.includes(id)) {
-            item.classList.add('read');
-            const badge = item.querySelector('.read-badge');
-            if (badge) badge.classList.remove('hidden');
-          }
-        });
-      }
-
-      // Jalankan Cek History
-      checkReadHistory();
-
-
-      // ----------------------------------------
-      // C. FITUR SEARCH CHAPTER
-      // ----------------------------------------
       const searchInput = document.getElementById('chapterSearchInput');
       const chapterList = document.getElementById('chapterList');
       const noResultMsg = document.getElementById('noResultMsg');
 
-      if (searchInput && chapterList) {
+      if(searchInput && chapterList) {
         const listItems = chapterList.getElementsByTagName('li');
+
         searchInput.addEventListener('keyup', function() {
           const filter = searchInput.value.toLowerCase();
           let visibleCount = 0;
+
+          // Loop semua item
           for (let i = 0; i < listItems.length; i++) {
             const spanTitle = listItems[i].querySelector('.chapter-title');
             if (spanTitle) {
               const txtValue = spanTitle.textContent || spanTitle.innerText;
+              
               if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                listItems[i].style.display = "";
+                listItems[i].style.display = ""; // Show
                 visibleCount++;
               } else {
-                listItems[i].style.display = "none";
+                listItems[i].style.display = "none"; // Hide
               }
             }
           }
-          if (noResultMsg) noResultMsg.style.display = (visibleCount === 0 && listItems.length > 0) ? 'block': 'none';
+
+          // Tampilkan pesan kosong
+          if(noResultMsg) {
+             noResultMsg.style.display = (visibleCount === 0 && listItems.length > 0) ? 'block' : 'none';
+          }
         });
       }
     });
   </script>
-
-</body>
-</html>

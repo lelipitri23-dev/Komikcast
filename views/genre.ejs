@@ -3,11 +3,11 @@
 <head>
   <%- include('partials/head', {title: 'Genre: ' + genreName}) %>
 </head>
-<body class="bg-[#141414] text-gray-200 font-sans">
+<body class="bg-[#141414] text-gray-200 font-sans flex flex-col min-h-screen">
   
   <%- include('partials/navbar') %>
 
-  <div class="container mx-auto px-4 py-8">
+  <div class="container mx-auto px-4 py-8 flex-grow">
     
     <div class="mb-8 border-b border-[#333] pb-4 flex items-center gap-3">
       <div class="bg-blue-600 text-white p-3 rounded-lg shadow-lg">
@@ -15,7 +15,9 @@
       </div>
       <div>
         <h1 class="text-2xl font-bold text-white uppercase tracking-wide">Genre: <span class="text-blue-500"><%= genreName %></span></h1>
-        <p class="text-xs text-gray-500 mt-1"><%= mangas.length %> komik ditemukan</p>
+        <p class="text-xs text-gray-500 mt-1">
+          Ditemukan <%= totalData %> komik (Halaman <%= currentPage %> dari <%= totalPages %>)
+        </p>
       </div>
     </div>
 
@@ -24,12 +26,13 @@
         <% mangas.forEach(manga => { %>
           <div class="group relative bg-[#1e1e1e] rounded overflow-hidden shadow-lg hover:shadow-blue-500/20 border border-[#2a2a2a] transition duration-300">
             <a href="/komik/<%= manga.slug %>">
+              
               <div class="relative aspect-[3/4] overflow-hidden">
                 <img src="<%= manga.coverImage %>" alt="<%= manga.title %>" 
-                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500 ease-in-out">
+                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500 ease-in-out" loading="lazy">
                 
                 <span class="absolute top-1 right-1 text-[9px] font-bold px-1.5 py-0.5 rounded shadow 
-                  <%= manga.type === 'Manhwa' ? 'bg-purple-600 text-white' : 'bg-yellow-500 text-black' %>">
+                  <%= manga.type === 'Manhwa' ? 'bg-purple-600 text-white' : (manga.type === 'Manhua' ? 'bg-red-600 text-white' : 'bg-yellow-500 text-black') %>">
                   <%= manga.type || 'Manga' %>
                 </span>
 
@@ -42,15 +45,32 @@
                 <h3 class="text-xs font-bold text-white truncate group-hover:text-blue-400 transition mb-1">
                   <%= manga.title %>
                 </h3>
-                <div class="flex justify-between items-center text-[10px] text-gray-500">
+                <div class="flex justify-between items-center text-[10px] text-gray-500 border-t border-[#333] pt-2 mt-2">
                   <span>Updated</span>
-                  <span><%= manga.chapters.length > 0 ? 'Ch. ' + manga.chapters.length : '?' %></span>
+                  <span><%= new Date(manga.lastUpdated).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) %></span>
                 </div>
               </div>
             </a>
           </div>
         <% }) %>
       </div>
+
+      <% if (totalPages > 1) { %>
+        <div class="flex justify-center mt-12 gap-2">
+          
+          <% if (currentPage > 1) { %>
+            <a href="/genres/<%= currentSlug %>?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm text-gray-300 transition shadow-lg border border-[#333]">Prev</a>
+          <% } %>
+          
+          <span class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-bold shadow-lg shadow-blue-500/30"><%= currentPage %></span>
+          
+          <% if (currentPage < totalPages) { %>
+            <a href="/genres/<%= currentSlug %>?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-[#252525] hover:bg-blue-600 rounded text-sm text-gray-300 transition shadow-lg border border-[#333]">Next</a>
+          <% } %>
+
+        </div>
+      <% } %>
+
     <% } else { %>
       <div class="flex flex-col items-center justify-center py-20 text-gray-500">
         <i class="fas fa-folder-open text-6xl mb-4 text-[#333]"></i>
@@ -61,9 +81,7 @@
 
   </div>
 
-  <footer class="bg-[#111] border-t border-[#222] mt-12 py-8 text-center">
-    <p class="text-xs text-gray-600">&copy; 2025 KomikClone Project.</p>
-  </footer>
+  <%- include('partials/footer') %>
 
 </body>
 </html>
