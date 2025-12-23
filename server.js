@@ -283,12 +283,13 @@ app.get('/genres/:slug', async (req, res) => {
   }
 });
 
-// --- F. SEO & UTILS ---
+// --- F. SEO & UTILS (HTTPS FIX) ---
 app.get('/robots.txt', (req, res) => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
-  res.type('text/plain');
+  // Logic: Kalau localhost pakai http, kalau live (Vercel) pakai https
+  const protocol = req.get('host').includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${req.get('host')}`;
   
-  // Menggunakan template literal (backticks) agar lebih rapi tanpa \n
+  res.type('text/plain');
   res.send(`User-agent: *
 Allow: /
 Disallow: /admin/
@@ -299,16 +300,13 @@ Disallow: /genres/
 Sitemap: ${baseUrl}/sitemap_index.xml`);
 });
 
-// ==========================================
-//           SITEMAP SYSTEM (YOAST STYLE)
-// ==========================================
+// --- SITEMAP SYSTEM ---
+const SITEMAP_LIMIT = 1000;
 
-const SITEMAP_LIMIT = 1000; // Batas URL per file sitemap
-
-// 1. SITEMAP INDEX (Induk)
 app.get('/sitemap_index.xml', async (req, res) => {
   try {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const protocol = req.get('host').includes('localhost') ? 'http' : 'https';
+    const baseUrl = `${protocol}://${req.get('host')}`;
     const totalKomik = await Manga.countDocuments();
     const totalKomikPages = Math.ceil(totalKomik / SITEMAP_LIMIT);
 
@@ -320,31 +318,25 @@ app.get('/sitemap_index.xml', async (req, res) => {
         <lastmod>${new Date().toISOString()}</lastmod>
       </sitemap>`;
 
-    // 2. Loop Sitemap Komik (komik-sitemap.xml, komik-sitemap-2.xml, dst)
-    // Jika ada 2500 komik, maka akan ada 3 file (page 1, 2, 3)
     for (let i = 1; i <= totalKomikPages; i++) {
-      const suffix = i === 1 ? '' : `-${i}`; // Halaman 1 tidak pakai angka, halaman 2 pakai -2
+      const suffix = i === 1 ? '' : `-${i}`;
       xml += `
       <sitemap>
         <loc>${baseUrl}/komik-sitemap${suffix}.xml</loc>
         <lastmod>${new Date().toISOString()}</lastmod>
       </sitemap>`;
     }
-
     xml += `</sitemapindex>`;
-
     res.header('Content-Type', 'application/xml');
     res.send(xml);
-
   } catch (error) {
-    console.error("Error Sitemap Index:", error);
     res.status(500).end();
   }
 });
 
-// 2. SITEMAP PAGE (Halaman Statis)
 app.get('/page-sitemap.xml', (req, res) => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  const protocol = req.get('host').includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${req.get('host')}`;
   const now = new Date().toISOString();
 
   const staticPages = [
@@ -367,39 +359,28 @@ app.get('/page-sitemap.xml', (req, res) => {
       <priority>${page.priority}</priority>
     </url>`;
   });
-
   xml += `</urlset>`;
   res.header('Content-Type', 'application/xml');
   res.send(xml);
 });
 
-// 3. SITEMAP KOMIK DINAMIS (Support pagination: komik-sitemap.xml, komik-sitemap-2.xml)
 app.get(/^\/komik-sitemap(-(\d+))?\.xml$/, async (req, res) => {
   try {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-
-    // Regex logic: Menangkap angka di URL. Jika tidak ada angka, berarti halaman 1.
-    // URL: /komik-sitemap.xml -> page 1
-    // URL: /komik-sitemap-2.xml -> page 2
+    const protocol = req.get('host').includes('localhost') ? 'http' : 'https';
+    const baseUrl = `${protocol}://${req.get('host')}`;
     const pageParam = req.params[1];
     const page = pageParam ? parseInt(pageParam) : 1;
-
-    // Hitung skip untuk database
     const skip = (page - 1) * SITEMAP_LIMIT;
 
-    // Ambil data komik sesuai halaman
     const mangas = await Manga.find()
       .select('slug lastUpdated coverImage')
       .sort({ lastUpdated: -1 })
       .skip(skip)
-      .limit(SITEMAP_LIMIT);
+      .limit(SITEMAP_LIMIT)
+      .lean();
 
-    // Jika halaman diminta tidak ada datanya (misal user ngetik sitemap-999.xml)
-    if (mangas.length === 0 && page > 1) {
-      return res.status(404).send('Sitemap not found');
-    }
+    if (mangas.length === 0 && page > 1) return res.status(404).send('Sitemap not found');
 
-    // Header XML dengan Namespace Image (Agar kolom Images terhitung seperti Yoast)
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="/main-sitemap.xsl"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -407,16 +388,10 @@ app.get(/^\/komik-sitemap(-(\d+))?\.xml$/, async (req, res) => {
 
     mangas.forEach(m => {
       const date = m.lastUpdated ? new Date(m.lastUpdated).toISOString() : new Date().toISOString();
-
-      // Pastikan URL gambar valid
       let imageXml = '';
       if (m.coverImage && m.coverImage.startsWith('http')) {
-        imageXml = `
-        <image:image>
-          <image:loc>${m.coverImage}</image:loc>
-        </image:image>`;
+        imageXml = `<image:image><image:loc>${m.coverImage}</image:loc></image:image>`;
       }
-
       xml += `
       <url>
         <loc>${baseUrl}/komik/${m.slug}</loc>
@@ -426,14 +401,10 @@ app.get(/^\/komik-sitemap(-(\d+))?\.xml$/, async (req, res) => {
         ${imageXml}
       </url>`;
     });
-
     xml += `</urlset>`;
-
     res.header('Content-Type', 'application/xml');
     res.send(xml);
-
   } catch (error) {
-    console.error("Error Sitemap Komik:", error);
     res.status(500).end();
   }
 });
