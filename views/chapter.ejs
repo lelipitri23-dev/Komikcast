@@ -122,10 +122,10 @@
         </div>
 
         <div class="redesign-social">
-          <a class="redesign-link redesign-facebook" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://yourdomain.com' + '/baca/' + mangaSlug + '/' + chapterSlug) %>" target="_blank">
+          <a class="redesign-link redesign-facebook" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://komikcast.help' + '/baca/' + mangaSlug + '/' + chapterSlug) %>" target="_blank">
             <i class="fab fa-facebook-f"></i> Facebook
           </a>
-          <a class="redesign-link redesign-whatsapp" href="whatsapp://send?text=Baca <%= chapter.title %> di <%= encodeURIComponent('http://yourdomain.com' + '/baca/' + mangaSlug + '/' + chapterSlug) %>" target="_blank">
+          <a class="redesign-link redesign-whatsapp" href="whatsapp://send?text=Baca <%= chapter.title %> di <%= encodeURIComponent('https://komikcast.help' + '/baca/' + mangaSlug + '/' + chapterSlug) %>" target="_blank">
             <i class="fab fa-whatsapp"></i> Whatsapp
           </a>
         </div>
@@ -256,4 +256,5 @@
     };
     // Bisa disimpan ke localStorage jika ingin fitur history
     // localStorage.setItem('last_read', JSON.stringify(historyData));
+
   </script>
