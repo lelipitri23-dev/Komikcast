@@ -474,7 +474,7 @@ res.status(500).send("Error memuat genre.");
 
 // --- F. SEO & UTILS ---
 app.get('/robots.txt', (req, res) => {
-const baseUrl = `${req.protocol}://${req.get('host')}`;
+const baseUrl = `https://${req.get('host')}`;
 res.type('text/plain');
 
 // Menggunakan template literal (backticks) agar lebih rapi tanpa \n
