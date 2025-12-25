@@ -5,7 +5,7 @@ KomiCast adalah aplikasi web *content aggregator* untuk membaca komik (Manga, Ma
 ## 🌐 Live Demo & Preview
 
 Lihat aplikasi yang sudah berjalan (Live Preview) di sini:  
-👉 **[https://komikcast.work.gd/](https://komikcast.work.gd/)**
+👉 **[https://komikcast.help](https://komikcast.help)**
 
 ![Preview Tampilan KomiCast](https://github.com/lelipitri23-dev/Komikcast/blob/main/694af7103cf560251f3b6765.png?raw=true)
 
